@@ -43,9 +43,21 @@ class PasswordManager:
             with open(self.password_file, 'a+') as f:
                 encrypted = Fernet(self.key).encrypt(password.encode())
                 f.write(site + ":" + encrypted.decode() + "\n")
+        else:
+            print("No password file loaded! Did you forget to load one?")
 
     def get_password(self, site):
         return self.password_dict[site]
+    
+    def get_sites(self):
+        if self.password_file is not None:
+            with open(self.password_file, 'r') as f:
+                for line in f:
+                    site, _ = line.split(":")
+                    print(f"{site}")
+        else:
+            print("No password file loaded! Did you forget to load one?")
+
 
 def main():
     password = {
@@ -56,50 +68,87 @@ def main():
     }
 
     pm = PasswordManager()
-    print("""What do you want to do?
-          (1) Create a new key
-          (2) Load an existing key
-          (3) Create new password file
-          (4) Load existing password file
-          (5) Add a new password
-          (6) Get a password
-          (q) Quit
-           """)
+    print("""
+            -----------------------------------
+                What do you want to do?:
+            (1) I don't have passwords saved...
+            (2) I have passwords saved...
+            ------------------------------------\n
+        """)
     done = False
+    choice = input("Enter your choice: ")
 
-    while not done:
-        choice = input("Enter your choice: ")
-        if choice == "1":
-            path = input("Enter path: ")
-            pm.create_key(path)
-        
-        elif choice == "2":
-            path = input("Enter path: ")
-            pm.load_key(path)
-        
-        elif choice == "3":
-            path = input("Enter path: ")
-            pm.create_password_file(path, password)
-        
-        elif choice == "4":
-            path = input("Enter path: ")
-            pm.load_password_file(path)
+    if choice == "1":
+        while (done is not True):
+            print("""\n
+                    ------------------------------------
+                        What do you want to do?:
+                    (1) Create a new key
+                    (2) Create new password file
+                    (q) Quit
+                    ------------------------------------
+                """)
+            choice2 = input("Enter your choice: ")
+            if choice2 == "1":
+                path = input("Enter name of file: ")
+                pm.create_key(path)
+                    
+            elif choice2 == "2":
+                path = input("Enter name of file: ")
+                pm.create_password_file(path, password)
+            
+            elif choice2 == "q":
+                done = True
+                print("Exiting...")
 
-        elif choice == "5":
-            site = input("Enter the site: ")
-            password = input("Enter the password: ")
-            pm.add_password(site, password)
-        
-        elif choice == "6":
-            site = input("What site do you want?: ")
-            print(f"Password for {site} is {pm.get_password(site)}")
+            else:
+                print("Not valid input.")
 
-        elif choice == "q":
-            done = True
-            print("Exiting...")
-        
-        else:
-            print("Not a valid option.")
+    elif choice == "2":
+        while (done is not True):
+            print("""\n
+                    ------------------------------------
+                        What do you want to do?
+                    (1) Load an existing key 
+                    (2) Load existing password file
+                    (3) List sites with passwords
+                    (4) Add a new password
+                    (5) Retrieve a password
+                    (q) Quit
+                    ------------------------------------
+                """)
+
+            choice2 = input("Enter your choice: ")
+            if choice2 == "1":
+                path = input("Enter name of file: ")
+                pm.load_key(path)
+
+            elif choice2 == "2":
+                path = input("Enter name of file: ")
+                pm.load_password_file(path)
+            
+            elif choice2 == "3":
+                print("You have passwords for:")
+                pm.get_sites()
+
+            elif choice2 == "4":
+                site = input("Enter the site: ")
+                password = input("Enter the password: ")
+                pm.add_password(site, password)
+                    
+            elif choice2 == "5":
+                site = input("What site do you want?: ")
+                print(f"Password for {site} is {pm.get_password(site)}")
+
+            elif choice2 == "q":
+                done = True
+                print("Exiting...")
+            
+            else:
+                print("Not valid input.")
+    else:
+        print("Invalid choice!")
+        return
 
 if __name__ == "__main__":
     main()
