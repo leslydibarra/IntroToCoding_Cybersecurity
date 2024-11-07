@@ -9,7 +9,6 @@ class PasswordManager:
 
     def create_key(self, path):
         self.key = Fernet.generate_key()
-        print(self.key)
         with open(path, 'wb') as f:
             f.write(self.key)
             
@@ -47,9 +46,9 @@ class PasswordManager:
 def main():
     password = {
         "Email": "1234567",
-        "facebook": "myfbpassword",
-        "youtube": "helloworld123",
-        "something": "myfavoritepassword_123"
+        "Facebook": "myfbpassword",
+        "Youtube": "helloworld123",
+        "Instagram": "myfavoritepassword_123"
     }
 
     pm = PasswordManager()
@@ -60,7 +59,8 @@ def main():
     (3) Create a new password file
     (4) Load Existing password file
     (5) Add a new password
-    (6) Quit
+    (6) Get a password
+    (q) Quit
     """)
 
     done = False
